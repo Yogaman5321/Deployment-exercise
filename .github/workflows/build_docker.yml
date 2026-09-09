@@ -29,7 +29,14 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
+      # Step 3A - Make lowercase repository
+      - name: 3A - Set lower case owner name
+        run: |
+          echo "REPO_LC=${REPO,,}" >>${GITHUB_ENV}
+        env:
+          REPO: '${{ github.repository }}'
+
       # Step 3 - Build and Push Docker Image
       # https://github.com/docker/build-push-action
       - name: 3 - Build and Push Docker Image
@@ -38,8 +45,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${ REPO_LC }:${{ github.ref_name }}
+            ghcr.io/${ REPO_LC }:latest
 
       # Step 4 - Make Release on GitHub
       # https://github.com/softprops/action-gh-release
